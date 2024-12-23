@@ -10,6 +10,7 @@ import { EmailModule } from './email/email.module';
 import { RedisModule } from './redis/redis.module';
 import { ProfileModule } from './profile/profile.module';
 import { AgreeOfTermsModule } from './agree-of-terms/agree-of-terms.module';
+import { MinioClientModule } from './minio-client/minio-client.module';
 import * as Joi from '@hapi/joi';
 
 @Module({
@@ -21,16 +22,26 @@ import * as Joi from '@hapi/joi';
         POSTGRES_USER: Joi.string().required(),
         POSTGRES_PASSWORD: Joi.string().required(),
         POSTGRES_DB: Joi.string().required(),
+
         JWT_ACCESSTOKEN_SECRET: Joi.string().required(),
         JWT_ACCESSTOKEN_EXPIRATION_TIME: Joi.string().required(),
         JWT_REFRESHTOKEN_SECRET: Joi.string().required(),
         JWT_REFRESHTOKEN_EXPIRATION_TIME: Joi.string().required(),
+
         EMAIL_SERVICE: Joi.string().required(),
         EMAIL_USER: Joi.string().required(),
         EMAIL_PASSWORD: Joi.string().required(),
+
         REDIS_HOST: Joi.string().required(),
         REDIS_PORT: Joi.number().required(),
         REDIS_TTL: Joi.number().required(),
+
+        MINIO_ENDPOINT: Joi.string().required(),
+        MINIO_PORT: Joi.number().required(),
+        MINIO_ACCESS_KEY: Joi.string().required(),
+        MINIO_SECRET_KEY: Joi.string().required(),
+        MINIO_BUCKET: Joi.string().required(),
+
         PORT: Joi.number().required(),
       }),
     }),
@@ -42,6 +53,7 @@ import * as Joi from '@hapi/joi';
     RedisModule,
     ProfileModule,
     AgreeOfTermsModule,
+    MinioClientModule,
   ],
   controllers: [AppController],
   providers: [AppService],

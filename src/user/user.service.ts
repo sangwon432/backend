@@ -1,18 +1,21 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { CACHE_MANAGER } from '@nestjs/common/cache';
 import * as bcrypt from 'bcryptjs';
 import { Cache } from 'cache-manager';
 import { Profile } from '../profile/entities/profile.entity';
+import { BufferedFile } from '../minio-client/file.model';
+import { MinioClientService } from '../minio-client/minio-client.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private readonly minioClientService: MinioClientService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
@@ -62,14 +65,20 @@ export class UserService {
     return await this.userRepository.update({ id }, { ...updateUserDto });
   }
 
-  async updateUserInfo(user: User, info: Profile) {
-    const existedUser = await this.userRepository.findOneBy({
-      id: user.id,
-    });
+  async updateUserInfo(
+    user: User,
+    images?: BufferedFile[],
+    createUserDto?: CreateUserDto,
+  ): Promise<UpdateResult> {
+    const updateProfileImgs = images?.length
+      ? await this.minioClientService.uploadProfileImgs(user, images, 'profile')
+      : [];
 
-    if (!existedUser) throw new Error('User not found');
-    existedUser.profile = info;
+    const updateData = {
+      ...createUserDto,
+      profileImg: updateProfileImgs,
+    };
 
-    return await this.userRepository.save(existedUser);
+    return await this.userRepository.update(user.id, updateData);
   }
 }
