@@ -3,6 +3,7 @@ import { BeforeInsert, Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { Provider } from './provider.enum';
 import { Profile } from '../../profile/entities/profile.entity';
+import { AgreeOfTerm } from '../../agree-of-terms/entities/agree-of-term.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -21,6 +22,13 @@ export class User extends BaseEntity {
     default: Provider.LOCAL,
   })
   public provider: Provider;
+
+  @OneToOne(() => AgreeOfTerm, {
+    eager: true,
+    cascade: true,
+  })
+  @JoinColumn()
+  public agree: AgreeOfTerm;
 
   @OneToOne(() => Profile, {
     eager: true,

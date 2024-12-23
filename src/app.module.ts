@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { EmailModule } from './email/email.module';
 import { RedisModule } from './redis/redis.module';
 import { ProfileModule } from './profile/profile.module';
+import { AgreeOfTermsModule } from './agree-of-terms/agree-of-terms.module';
 import * as Joi from '@hapi/joi';
 
 @Module({
@@ -40,6 +41,7 @@ import * as Joi from '@hapi/joi';
     EmailModule,
     RedisModule,
     ProfileModule,
+    AgreeOfTermsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
