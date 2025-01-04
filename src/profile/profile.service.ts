@@ -27,7 +27,7 @@ export class ProfileService {
     // newProfile.user.profile = newProfile;
 
     const savedProfile = await this.profileRepository.save(newProfile);
-    await this.userService.updateUserInfo(user, savedProfile);
+    // await this.userService.updateUserInfo(user, savedProfile);
     return newProfile;
   }
 

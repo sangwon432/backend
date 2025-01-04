@@ -5,15 +5,16 @@ import {
   Req,
   UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { AccessTokenGuard } from '../auth/guards/access-token.guard';
 import { RequestWithUserInterface } from '../auth/interfaces/requestWithUser.interface';
 import { CreateUserDto } from './dto/create-user.dto';
 import { BufferedFile } from '../minio-client/file.model';
-import { Profile } from 'passport';
 import { UpdateResult } from 'typeorm';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('user')
 @ApiTags('user')
@@ -31,6 +32,35 @@ export class UserController {
 
   @Put()
   @UseGuards(AccessTokenGuard)
+  @UseInterceptors(FilesInterceptor('profileImgs'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'multiple image files with additional user data',
+    schema: {
+      type: 'object',
+      properties: {
+        profileImgs: {
+          type: 'array',
+          items: {
+            type: 'string',
+            format: 'binary',
+            description: 'profile image file',
+          },
+        },
+        username: {
+          type: 'string',
+          description: 'username of the user',
+          example: 'johnd',
+        },
+        email: {
+          type: 'string',
+          description: 'email of the user',
+          example: 'john@example.com',
+        },
+      },
+      required: [], // set all fields to optional
+    },
+  })
   async updateUserInfo(
     @Req() req: RequestWithUserInterface,
     @UploadedFiles() profileImgs?: BufferedFile[],

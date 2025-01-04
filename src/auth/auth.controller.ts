@@ -7,7 +7,8 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 import { EmailVerificationDto } from '../user/dto/email-verification.dto';
 import { UserService } from '../user/user.service';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { LoggedinUserDto } from './dto/loggedin-user.dto';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -24,6 +25,9 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('/login')
+  @ApiBody({
+    type: LoggedinUserDto,
+  })
   async loggedInUser(@Req() req: RequestWithUserInterface) {
     // const user = await this.authService.logInUser(loggedinUserDto);
     // const token = await this.authService.generateAccessToken(user.id);
